@@ -4,6 +4,7 @@ from langchain_community.llms import Ollama
 import markdown
 import faiss
 from langchain_ollama import OllamaEmbeddings
+from langchain_text_splitters import MarkdownHeaderTextSplitter
 
 from uuid import uuid4
 
@@ -45,6 +46,43 @@ def embed(filepath: str):
 
     embeddings = OllamaEmbeddings(model="all-minilm")
     index = faiss.IndexFlatL2(len(embeddings.embed_query("hello world")))  # L2 = Euclidean distance
+
+    # langchain vector store
+    vector_store = FAISS(
+        embedding_function=embeddings,
+        index=index,
+        docstore=InMemoryDocstore(),
+        index_to_docstore_id={},
+    )
+
+    uuids = [str(uuid4()) for _ in range(len(documents))]
+    vector_store.add_documents(documents=documents, ids=uuids)
+
+    vector_store.save_local(CONFIG["vector_store_filename"])
+
+    print(f"Vector store save to {CONFIG["vector_store_filename"]}")
+    return vector_store
+
+def embed_with_markdown_splitter(filepath: str):
+    documents = []
+    headers_to_split_on = [
+        ("#", "Header 1"),
+        ("##", "Header 2"),
+        ("###", "Header 3"),
+    ]
+    for file in Path(rf'{filepath}').rglob('*.md'):
+        if file.is_file():
+            with open(file, 'r', encoding='utf-8') as f:
+                markdown_text = f.read()
+                
+                markdown_splitter = MarkdownHeaderTextSplitter(headers_to_split_on)
+                md_header_splits = markdown_splitter.split_text(markdown_text)
+
+                for document in md_header_splits:
+                    documents.append(document)
+
+    embeddings = OllamaEmbeddings(model="all-minilm")
+    index = faiss.IndexFlatL2(len(embeddings.embed_query("hello world one two three")))  # L2 = Euclidean distance
 
     # langchain vector store
     vector_store = FAISS(
