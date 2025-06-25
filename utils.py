@@ -12,7 +12,7 @@ from pathlib import Path
 from langchain_core.documents import Document
 from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_community.vectorstores import FAISS
-from langchain.text_splitter import MarkdownTextSplitter
+from langchain.text_splitter import MarkdownTextSplitter, RecursiveCharacterTextSplitter
 from typing import List, Dict
 from config import CONFIG
 
@@ -99,3 +99,41 @@ def embed_with_markdown_splitter(filepath: str):
 
     print(f"Vector store save to {CONFIG["vector_store_filename"]}")
     return vector_store
+
+def embed_with_recursive_splitter(filepath: str):
+        documents = []
+        for file in Path(rf'{filepath}').rglob('*.md'):
+            if file.is_file():
+                with open(file, 'r', encoding='utf-8') as f:
+                    markdown_text = f.read()
+                    
+
+                    doc = Document(page_content=markdown_text)
+                    documents.append(doc)
+
+
+        recursive_splitter = RecursiveCharacterTextSplitter(
+                        chunk_size=500,
+                        chunk_overlap=100,
+                        separators=["\n\n", "\n", "#", "##", "###"]
+)
+        splitted_doc = recursive_splitter.split_documents(documents)
+
+        embeddings = OllamaEmbeddings(model="all-minilm")
+        index = faiss.IndexFlatL2(len(embeddings.embed_query("hello world one two three")))  # L2 = Euclidean distance
+
+        # langchain vector store
+        vector_store = FAISS(
+            embedding_function=embeddings,
+            index=index,
+            docstore=InMemoryDocstore(),
+            index_to_docstore_id={},
+        )
+
+        uuids = [str(uuid4()) for _ in range(len(splitted_doc))]
+        vector_store.add_documents(documents=splitted_doc, ids=uuids)
+
+        vector_store.save_local(CONFIG["vector_store_filename"])
+
+        print(f"Vector store save to {CONFIG["vector_store_filename"]}")
+        return vector_store

@@ -1,6 +1,6 @@
 import streamlit as st
 from ask import main
-from utils import embed_with_markdown_splitter
+from utils import embed_with_markdown_splitter, embed_with_recursive_splitter
 from config import CONFIG
 
 st.title("💬 Text Input & Output Demo")
@@ -9,7 +9,7 @@ left, middle, right = st.columns([10,15,0.5])
 
 # button to retrain
 if left.button("Embed"):
-    embed_with_markdown_splitter(CONFIG["document_folder"])
+    embed_with_recursive_splitter(CONFIG["document_folder"])
 
 # Input from user
 user_input = middle.text_area("Enter your question or text:", height=150)
