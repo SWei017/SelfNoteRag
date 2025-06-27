@@ -105,18 +105,18 @@ def embed_with_recursive_splitter(filepath: str):
         for file in Path(rf'{filepath}').rglob('*.md'):
             if file.is_file():
                 with open(file, 'r', encoding='utf-8') as f:
+                    
+                    filename = file.stem
                     markdown_text = f.read()
                     
-
-                    doc = Document(page_content=markdown_text)
+                    doc = Document(page_content=markdown_text, metadata={"Title": filename})
                     documents.append(doc)
 
 
         recursive_splitter = RecursiveCharacterTextSplitter(
                         chunk_size=500,
                         chunk_overlap=100,
-                        separators=["\n\n", "\n", "#", "##", "###"]
-)
+                        separators=["\n\n", "\n", "#", "##", "###"])
         splitted_doc = recursive_splitter.split_documents(documents)
 
         embeddings = OllamaEmbeddings(model="all-minilm")
