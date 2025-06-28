@@ -1,16 +1,16 @@
-from config import CONFIG
 from generation.OllamaLocalGenerator import OllamaLocalGenerator
 from chunking.text_splitters import MarkdownTextSplitter, RecursiveTextSplitter
 from embeddings.embedder import OllamaLocalEmbedding
 from reader.MarkdownReader import MarkdownReader
+from retrieval.Retriever import Retriever
 
 class SelfNoteRAGPipeline:
     def __init__(self, config):
-        self.config = config
         reader = MarkdownReader()
         self.splitter = RecursiveTextSplitter(reader=reader)
-        self.embedder = OllamaLocalEmbedding(vector_store_folderpath=self.config["vector_store_folderpath"])
-        self.generator = OllamaLocalGenerator(embedding=self.embedder)
+        self.embedder = OllamaLocalEmbedding(vector_store_folderpath=config["vector_store_folderpath"])
+        self.retrieval = Retriever(self.embedder.vector_store)
+        self.generator = OllamaLocalGenerator(embedding=self.embedder, retrieval=self.retrieval)
         
         self.load_vector_store()
 
