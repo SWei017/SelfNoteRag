@@ -67,7 +67,7 @@ class RecursiveTextSplitter(Chunking):
                     filename = filepath.stem
                     markdown_text = f.read()
                     
-                    doc = Document(page_content=markdown_text, metadata={"Title": filename})
+                    doc = Document(page_content=markdown_text, metadata={"title": filename})
                     self.documents.append(doc)
 
         self.documents = self.splitter.split_documents(self.documents)
