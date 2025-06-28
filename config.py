@@ -1,5 +1,7 @@
 # config.py
 CONFIG = {
-    "vector_store_filename": "faiss_index",
+    "embedding_model": "all-minilm",
+    "generator_model": "llama3.2",
+    "vector_store_folderpath": r"C:\Projects\SelfNoteRAG\faiss_index",
     "document_folder": r"C:\Users\shewe\OneDrive\Documents\Obsidian Vault",
 }

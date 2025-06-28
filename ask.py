@@ -1,4 +1,4 @@
-from utils import embed, load
+from utils.utils import embed, load
 from config import CONFIG
 import sys
 from langchain_community.llms import Ollama 

@@ -3,7 +3,6 @@ from langchain_ollama import OllamaEmbeddings
 from langchain_community.llms import Ollama 
 import markdown
 import faiss
-from langchain_ollama import OllamaEmbeddings
 from langchain_text_splitters import MarkdownHeaderTextSplitter
 
 from uuid import uuid4

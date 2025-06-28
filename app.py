@@ -1,7 +1,8 @@
 import streamlit as st
-from ask import main
-from utils import embed_with_markdown_splitter, embed_with_recursive_splitter
+from main import SelfNoteRAGPipeline
 from config import CONFIG
+
+rag_pipeline = SelfNoteRAGPipeline(CONFIG)
 
 st.title("💬 Text Input & Output Demo")
 
@@ -9,7 +10,7 @@ left, middle, right = st.columns([10,15,0.5])
 
 # button to retrain
 if left.button("Embed"):
-    embed_with_recursive_splitter(CONFIG["document_folder"])
+    rag_pipeline.embed(CONFIG["document_folder"])
 
 # Input from user
 user_input = middle.text_area("Enter your question or text:", height=150)
@@ -17,7 +18,7 @@ user_input = middle.text_area("Enter your question or text:", height=150)
 # Action button
 if middle.button("Submit"):
     # Simulated processing (replace this with your logic)
-    content, response = main(user_input)
+    content, response = rag_pipeline.ask(user_input)
     # Output display
     middle.markdown("### 📤 Output")
     middle.write(response)
