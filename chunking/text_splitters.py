@@ -49,7 +49,8 @@ class MarkdownTextSplitter(Chunking):
         return self.documents
     
 class RecursiveTextSplitter(Chunking):
-    def __init__(self, reader: Reader, chunk_size: int = 500, chunk_overlap: int = 100, separators: List[str] = None):
+    def __init__(self, reader: Reader, documents: List[Document] = None, chunk_size: int = 500, chunk_overlap: int = 100, separators: List[str] = None):
+        super().__init__(documents)
         self.reader = reader
         separators = separators if separators else ["\n\n", "\n", "#", "##", "###"]
 
@@ -74,3 +75,11 @@ class RecursiveTextSplitter(Chunking):
         
         return self.documents
     
+    def get_chunkings(self) -> Dict[str, List[str]]:
+        documents_dict = {}
+        for doc in self.documents:
+            title =  doc.metadata.get('title')
+            if title:
+                documents_dict.setdefault(doc.metadata['title'], []).append(doc.page_content)
+
+        return documents_dict

@@ -12,3 +12,7 @@ class Chunking(ABC):
     @abstractmethod
     def split_text(self, folder_path: str) -> List[Document]:
         pass
+
+    @abstractmethod
+    def get_chunkings(self) -> List[str]:
+        pass
