@@ -22,7 +22,7 @@ class OllamaLocalGenerator(Generator):
         prompt = f"Answer the question based on the context below.\n\nContext:\n{context}\n\nQuestion: {query}\nAnswer:"
 
         llm = Ollama(model="llama3.2")
-        response = llm.predict(prompt)
+        response = llm.invoke(prompt)
         return (context, response)
 
     def load_vector_store(self) -> FAISS:
