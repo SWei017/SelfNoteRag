@@ -20,6 +20,12 @@ class OllamaLocalEmbedding(Embedding):
 
     def embed(self, documents: List[Document]) -> FAISS:
         uuids = [str(uuid4()) for _ in range(len(documents))]
+        self.vector_store = FAISS(
+                            embedding_function=self.embedding,
+                            index=self.index,
+                            docstore=InMemoryDocstore(),
+                            index_to_docstore_id={},
+                        )
         self.vector_store.add_documents(documents=documents, ids=uuids)
         self.vector_store.save_local(self.folderpath)
         return self.vector_store

@@ -62,6 +62,7 @@ class RecursiveTextSplitter(Chunking):
 
     def split_text(self, folder_path: str) -> List[Document]:
         filepaths = self.reader.read_folder(folder_path)
+        documents = []
         for filepath in filepaths:
             if filepath.is_file():
                 with open(filepath, 'r', encoding='utf-8') as f:
@@ -69,9 +70,9 @@ class RecursiveTextSplitter(Chunking):
                     markdown_text = f.read()
                     
                     doc = Document(page_content=markdown_text, metadata={"title": filename})
-                    self.documents.append(doc)
+                    documents.append(doc)
 
-        self.documents = self.splitter.split_documents(self.documents)
+        self.documents = self.splitter.split_documents(documents)
         
         return self.documents
     
