@@ -17,4 +17,4 @@ httpx==0.28.1
 tqdm==4.67.1
 numpy==1.26.4
 pydantic==2.11.5
-typing-extensions==4.11.0  # Needed for some langchain modules
+typing-extensions==4.12.2  # Needed for some langchain modules
