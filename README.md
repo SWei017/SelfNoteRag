@@ -4,27 +4,23 @@ SelfNoteRAG is a retrieval-augmented generation (RAG) system for semantic search
 
 ⚠️ Note: This project is currently in active development. Features, dependencies, and structure may change. Contributions, suggestions, and feedback are welcome!
 
+## Personal Objectives
+- To learn how Retrieval-Augmented Generation (RAG) works and to improve note-taking experience in Obsidian. It’s both a learning project and a personal tool to search my own notes.
+
 ## Features
 - **Basic RAG system (embed, retrieve, prompt)** using local LLMs (Ollama) and vector databases (FAISS)
 - **Streamlit web interface** for chat and chunking panel
 - **Configurable models and chunking parameters** via sidebar settings
 - **Obsidian integration**: open retrieved notes directly in Obsidian
 
-### Required Python Packages
-There is no `requirements.txt` yet. Install these manually:
-- streamlit
-- langchain
-- langchain_community
-- langchain_core
-- langchain_ollama
-- sentence-transformers
-- faiss-cpu
-- watchdog
-- markdown
-- (and any other dependencies as needed)
-
 ### Required LLM backend
 - Ollama must be installed and running with your desired local model (e.g., llama3).
+
+## Installation
+Install the required dependencies using pip:
+```sh
+pip install -r requirements.txt
+```
 
 ## Configuration
 Edit `config.json` to set your embedding/generator models, vector store path, and your Obsidian vault directory:
