@@ -5,6 +5,7 @@ from reader.MarkdownReader import MarkdownReader
 from retrieval.Retriever import Retriever
 from typing import Dict, List
 
+
 class SelfNoteRAGPipeline:
     def __init__(self, config):
         reader = MarkdownReader()
@@ -18,24 +19,29 @@ class SelfNoteRAGPipeline:
             chunk_overlap=chunk_overlap)
         self.embedder = OllamaLocalEmbedding(vector_store_folderpath=config["vector_store_folderpath"])
         self.retrieval = Retriever(self.embedder.vector_store)
-        self.generator = OllamaLocalGenerator(embedding=self.embedder, retrieval=self.retrieval)
+        self.generator = OllamaLocalGenerator(embedding=self.embedder)
         
         self.load_vector_store()
 
     def load_vector_store(self):
         self.vector_store = self.embedder.load_vector_store()
         
-    
     def embed(self, folder_path):
         documents = self.splitter.split_text(folder_path)
         self.vector_store = self.embedder.embed(documents)
 
     def ask(self, query: str):
-        context, response = self.generator.ask(query)
+        retrieved_document = self.retrieval.retrieve(query=query)
+
+        self.retrieved_document_filepath = retrieved_document.metadata.get("filepath", "")
+        context, response = self.generator.ask(retrieved_document.page_content, query)
 
         return context, response
     
     def get_chunkings(self) -> Dict[str, List[str]]:
         return self.splitter.get_chunkings()
+    
+
+
 
 
