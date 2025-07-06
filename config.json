@@ -2,6 +2,7 @@
   "embedding_model": "all-minilm",
   "generator_model": "llama3.2",
   "vector_store_folderpath": "C:\\Projects\\SelfNoteRAG\\faiss_index",
-  "document_folder": "C:\\Users\\shewe\\OneDrive\\Documents\\Obsidian Vault",
-  "chunk_size": "500"
+  "vault_directory": "C:\\Users\\shewe\\OneDrive\\Documents\\Obsidian Vault",
+  "chunk_size": 700,
+  "chunk_overlap": 220
 }

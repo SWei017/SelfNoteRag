@@ -1,6 +1,8 @@
 import streamlit as st
 from main import SelfNoteRAGPipeline
 import json
+import os
+from urllib.parse import quote
 
 def load_config():
     with open("config.json", "r") as f:
@@ -88,10 +90,10 @@ with st.sidebar.expander("⚙️ Settings", expanded=False):
         )
 
         # Document Folder
-        document_folder = config.get("document_folder", "")
-        config["document_folder"] = st.text_input(
+        vault_directory = config.get("vault_directory", "")
+        config["vault_directory"] = st.text_input(
             label="Document Folder",
-            value=document_folder,
+            value=vault_directory,
             help="Path to your documents folder"
         )
 
@@ -126,8 +128,8 @@ with st.sidebar.expander("⚙️ Settings", expanded=False):
             st.success("Pipeline reloaded!")
 # ----------------- END OF SIDEBAR --------------------
 
-col0, col1, col2 = st.columns([15, 70, 15])
-
+col0, col1, col2, col3 = st.columns([15, 35, 35, 15])
+col0_1, col1_1, col2_1 = st.columns([15, 70, 15])
 
 if page == "Chat":
     with col1:
@@ -147,7 +149,7 @@ if page == "Chat":
 
         # Output display containers
         output_container = st.container()
-        content_container = st.container()
+        
 
         # Render the result if exists
         if "last_response" in st.session_state:
@@ -155,15 +157,27 @@ if page == "Chat":
                 st.markdown("### 📤 Output")
                 st.write(st.session_state["last_response"])
 
+
+
+    with col2:
+        # for document info
+        content_container = st.container()
+        if "last_response" in st.session_state:
             with content_container:
+                encoded_file = quote(os.path.basename(str(rag_pipeline.retrieved_document_filepath)))
+                vault_name = os.path.basename(vault_directory)
+
+                obsidian_url = f"obsidian://open?vault={quote(vault_name)}&file={encoded_file}"
                 st.markdown("### 📤 Content")
-                st.write(st.session_state["last_content"])
+                st.write(f"[🔗 Open in Obsidian]({obsidian_url})", unsafe_allow_html=True)
+                st.markdown(st.session_state["last_content"])
+
 elif page == "Chunking Panel":
-    with col1:
+    with col1_1:
         st.title("Embedding Info")
         # button to retrain
         if st.button("Embed"):
-            rag_pipeline.embed(config["document_folder"])
+            rag_pipeline.embed(config["vault_directory"])
             st.session_state["chunked_docs"] = rag_pipeline.get_chunkings()
 
         if "chunked_docs" in st.session_state:
