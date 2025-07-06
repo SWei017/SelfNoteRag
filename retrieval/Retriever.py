@@ -14,16 +14,13 @@ class Retriever():
         # rerank
         document = self.rerank(query, documents)
         # metadata filter?
-        context = ''
-        if title:
-            context = "\n\n".join([doc.page_content for doc in documents if doc.metadata['title'].startswith(title)])
-        else:
-            context = "\n\n".join([doc.page_content for doc in document])
+        context = document.page_content
 
         return context
     
     def rerank(self, query: str, documents: List[Document]) -> Document:
-        corpus = [[doc.page_content for doc in documents]]
+        """Rerank top-k rseults and return 1st rank as Document"""
+        corpus = [doc.page_content for doc in documents]
         ranks = self.reranker.rank(query, corpus)
 
         document = documents[ranks[0]['corpus_id']] # only take the highest rank
